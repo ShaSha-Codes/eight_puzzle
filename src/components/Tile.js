@@ -8,8 +8,8 @@ function Tile(props) {
   return (
     
         <Grid item xs={4}>
-                <Paper elevation={6} rounded sx={{width:"80px",height:"80px"}}>
-                    <Typography variant="h4" component="h1" align="center" component={Stack}>
+                <Paper elevation={6} rounded={1} sx={{width:"80px",height:"80px"}} component={Stack} direction="column" justifyContent="center">
+                    <Typography variant="h4" component="h1" align="center" >
                         {props.value}
                     </Typography>
                 </Paper>
