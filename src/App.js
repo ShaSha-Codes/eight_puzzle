@@ -4,19 +4,25 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Tile from './components/Tile';
 import Button from '@mui/material/Button';
-import _ from "lodash"
-
+import './style.css'
 import { v4 } from 'uuid';
-
-
+import TreeView from '@mui/lab/TreeView';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import TreeItem from '@mui/lab/TreeItem';
+import DisplayLevel from './components/DisplayLevel';
+import song from "./audio/slide.mp3";
 function App() {
-
+  let new_song = new Audio(song);
   const [realRoot, setRealRoot] = React.useState([[1,8,2],[0,4,3],[7,6,5]]);
   const [path,setPath]=React.useState(0)
+  const [tree,setTree]=React.useState(0)
+  const [visible,setVisible]=React.useState(0)
   const [iterator,setIterator]=React.useState(-1)
   React.useEffect(()=>{
     if(iterator>-1){
         setTimeout(()=>{
+          new_song.play();
           setRealRoot(path[iterator])
           setIterator(prevIterator=>prevIterator-1)
         }, 1500)
@@ -38,12 +44,7 @@ function App() {
       }
         
     
-      print_tree(depth=1){
-        console.log(this.data)
-        for(let i of this.child){
-            i.print_tree(depth+1)
-        }
-    }
+      
   }
     //Functions 
 
@@ -51,7 +52,7 @@ function App() {
       let incorrect=0
       for(let i=0;i<3;i++){
         for(let j=0;j<3;j++){
-          if(state[i][j]!=goal.data[i][j]){
+          if(state[i][j]!==goal.data[i][j]){
             incorrect+=1
           }
         }
@@ -73,7 +74,7 @@ function App() {
             next_state[x][y]=next_state[temp_x][temp_y]
             next_state[temp_x][temp_y]=temp_var
             let temp_val=heuristic_funtion(next_state)
-            if(lowest_val==null || lowest_val==temp_val){
+            if(lowest_val===null || lowest_val===temp_val){
                 lowest_val=temp_val
                 temp.push(next_state)
               }
@@ -88,7 +89,7 @@ function App() {
 
       for(let i=0;i<3;i++){
         for(let j=0;j<3;j++){
-            if(parent.data[i][j]==0){
+            if(parent.data[i][j]===0){
                 x=i
                 y=j
             }
@@ -134,7 +135,7 @@ function App() {
     for(let k of parent.child){
         queue.push(k)
         
-        if(String(k.data)==String(goal.data)){
+        if(String(k.data)===String(goal.data)){
           return k
           
         }
@@ -148,24 +149,79 @@ function App() {
     let queue=[root]
 
 
+
+
+
+
+//////WORKING HERERERERERERERER
+
+
+
     function path_finder(){
       while(queue.length>=1){
         let temp_node=queue.shift()
         let test=children(temp_node)
         let res=[]
-        if(test!=undefined){
-            while(test!=null){
+        console.log("TESTING")
+        if(test!==undefined){
+            while(test!==null){
               res.push(test.data)
               test=test.parent
             }
             setPath(res)
             setIterator(res.length-1)
+            setVisible(1)
+            setTree(()=>{
+              let newTree=[]
+              for(let i=0;i<res.length;i++){
+                newTree.push([])
+              }
+              function print_tree(incomingNode,depth=0){
+                newTree[depth].push(incomingNode.data)
+                for(let i of incomingNode.child){
+                    print_tree(i,depth+1)
+                }
+            }
+            print_tree(root)
+
+            return newTree
+            })
             break
           }
           
         }
     }
     
+
+
+
+
+
+
+
+
+    function levelDisplayer(){
+      if(visible==1){
+        let res=[]
+        let counter=0
+        for (let i of tree){
+          res.push(<TreeItem nodeId={counter} label={<Typography sx={{textAlign:"center"}}variant="h5" component="h1">Depth {counter}</Typography>}>
+                      <DisplayLevel data={i} depth={counter}/> 
+                  </TreeItem>)
+          counter+=1
+        }
+        return res
+      }
+      return 
+    }
+
+
+
+
+
+
+
+
 
     function tile_maker(){
       let res=[]
@@ -179,12 +235,12 @@ function App() {
     
     function randomizer(){
       const test_cases=[
-          [[1,8,2],[0,4,3],[7,6,5]],
-          [[1,2,3],[0,4,6],[7,5,8]]
+          [[1,8,2],[0,4,3],[7,6,5]]
+  
 
 
       ]
-      setRealRoot(test_cases[Math.floor(Math.random() * 2)])
+      setRealRoot(test_cases[Math.floor(Math.random() * 1)])
     }
 
     function solver(){
@@ -192,20 +248,6 @@ function App() {
       path_finder()
     }
 
-    // function tester(){
-      
-    //     console.log("CCOOOOL")
-    //     setTestRoot((prevNode)=>{
-    //         if(String(prevNode)==String([[1,8,2],[0,4,3],[7,6,5]])){
-    //           return [[1,2,3],[4,5,6],[7,8,0]]
-    //         }else{
-    //           return [[1,8,2],[0,4,3],[7,6,5]]
-    //         }
-    //     })
-      
-    // }
-    // React.useEffect(()=>tester(),[0])
-    
    
   return (
     <Grid container marginTop={10} direction="column" alignItems="center" justifyContent="center">
@@ -230,7 +272,21 @@ backgroundImage:"linear-gradient(315deg, #b1bfd8 0%, #6782b4 74%)",borderRadius:
           </Button>
         </Grid>
       </Box>
+      <TreeView
+        aria-label="file system navigator"
+        defaultCollapseIcon={<ExpandMoreIcon />}
+        defaultExpandIcon={<ChevronRightIcon />}
+        sx={{  marginTop:"2em",flexGrow: 1, width: 1400}}
+      >
+
+            {levelDisplayer()}
+
+      </TreeView>
+      
+      
+
     </Grid>
+    
   )
 }
 
