@@ -1,6 +1,7 @@
 import React from 'react'
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import { nanoid } from 'nanoid'
 function DisplayNode(props) {
 
 
@@ -8,7 +9,7 @@ function DisplayNode(props) {
     let res=[]
     for(let k of props.data){
       res.push( 
-        <tr >
+        <tr key={nanoid(10)} >
             <td >
               {k[0]===0?"":k[0]}
             </td>

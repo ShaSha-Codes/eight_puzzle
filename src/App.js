@@ -18,6 +18,10 @@ import ListItemText from '@mui/material/ListItemText';
 import CircleIcon from '@mui/icons-material/Circle';
 import ListItemButton from '@mui/material/ListItemButton';
 import DisplayNode from './components/DisplayNode';
+import song from "./audio/slide.mp3";
+import { Fireworks } from 'fireworks/lib/react'
+import { nanoid } from 'nanoid'
+
 
 
 
@@ -28,15 +32,41 @@ function App() {
   const [tree,setTree]=React.useState(0)
   const [visible,setVisible]=React.useState(0)
   const [iterator,setIterator]=React.useState(-1)
+  const [celebration,setCelebration]=React.useState(false)
+
+
+
+  let audioClip = new Audio(song);
+
+ 
+
+
+
+  
+
+  
   React.useEffect(()=>{
     if(iterator>-1){
         setTimeout(()=>{
           setRealRoot(path[iterator])
           setIterator(prevIterator=>prevIterator-1)
+          audioClip.play()
         }, 500)
     }
+    if(iterator==0){
+      setTimeout(()=>{
+        setCelebration(true)
+      },1000)
+    }
+    if(iterator==-1){
+      setTimeout(()=>{
+        setCelebration(false)
+      },5000)
+    }
   },[iterator])
-  //Class
+  
+
+
   class Node
   {
       constructor(data){
@@ -81,14 +111,16 @@ function App() {
             let temp_var=next_state[x][y]
             next_state[x][y]=next_state[temp_x][temp_y]
             next_state[temp_x][temp_y]=temp_var
-            let temp_val=heuristic_funtion(next_state)
-            if(lowest_val===null || lowest_val===temp_val){
-                lowest_val=temp_val
-                temp.push(next_state)
-              }
-              else if(temp_val<lowest_val){
-                lowest_val=temp_val
-                temp=[next_state]
+            if(!(String(next_state) in duplicate)){
+              let temp_val=heuristic_funtion(next_state)
+              if(lowest_val===null || lowest_val===temp_val){
+                  lowest_val=temp_val
+                  temp.push(next_state)
+                }
+                else if(temp_val<lowest_val){
+                  lowest_val=temp_val
+                  temp=[next_state]
+                }
               }
             }
 
@@ -133,11 +165,9 @@ function App() {
         
 
     for(let j of temp){
-      if(!(String(j) in duplicate)){
-            duplicate[String(j)]=1
-            let new_node=new Node(j)
-            parent.add_child(new_node)
-          }
+        duplicate[String(j)]=1
+        let new_node=new Node(j)
+        parent.add_child(new_node)
     }
    
     for(let k of parent.child){
@@ -170,7 +200,6 @@ function App() {
         let temp_node=queue.shift()
         let test=children(temp_node)
         let res=[]
-        console.log("TESTING")
         if(test!==undefined){
             while(test!==null){
               res.push(test.data)
@@ -210,10 +239,10 @@ function App() {
 
     function levelDisplayer(){
       if(visible==1){
-        let res=[<Typography sx={{color:"black",textAlign:"center",marginBottom:'30px',marginTop:'50px'}}variant="h4" component="h1">Steps</Typography>]
+        let res=[<Typography key={nanoid()}  sx={{color:"black",textAlign:"center",marginBottom:'30px',marginTop:'50px'}}variant="h4" component="h1">Steps</Typography>]
         let counter=0
         for (let i of tree){
-          res.push(<TreeItem nodeId={counter} label={<Typography sx={{color:"black",textAlign:"center"}}variant="h5" component="h1">Depth {counter}</Typography>}>
+          res.push(<TreeItem key={nanoid()} nodeId={String(counter)} label={<Typography sx={{color:"black",textAlign:"center"}}variant="h5" component="h1">Depth {counter}</Typography>}>
                       <DisplayLevel data={i} depth={counter}/> 
                   </TreeItem>)
           counter+=1
@@ -243,12 +272,29 @@ function App() {
     
     function randomizer(){
       const test_cases=[
-          [[1,8,2],[0,4,3],[7,6,5]]
+          [[1,8,2],[0,4,3],[7,6,5]],
+          [[0,8,2],[1,4,3],[7,6,5]],
+          [[8,2,3],[1,4,0],[7,6,5]],
+          [[8,2,3],[1,6,4],[7,0,5]],
+          [[8,4,2],[1,0,3],[7,6,5]],
+          [[0,1,2],[3,4,5],[6,7,8]],
+          [[2,6,1],[7,0,4],[8,5,3]],
+          [[4,7,3],[2,0,1],[5,8,6]],
+          [[4,1,2],[3,8,6],[0,7,5]],
+          [[1,3,5],[8,0,2],[4,7,6]],
+          [[1,3,0],[6,2,8],[4,7,5]],
+          [[5,2,1],[8,7,3],[0,4,6]],
+          [[0,4,1],[8,3,6],[2,7,5]],
+          [[0,2,7],[3,5,6],[4,1,8]],
+          [[1,6,2],[5,0,3],[4,7,8]]
+          
+         
+
   
 
 
       ]
-      setRealRoot(test_cases[Math.floor(Math.random() * 1)])
+      setRealRoot(test_cases[Math.floor(Math.random() * 15)])
     }
 
     function solver(){
@@ -256,9 +302,24 @@ function App() {
       path_finder()
     }
 
+    let fxProps = {
+      count: 3,
+      interval: 300,
+      colors: ['#ffffff','#9C27B0','#cc3333', '#4CAF50', '#81C784'],
+      calc: (props, i) => ({
+        ...props,
+        x: (i + 1) * (window.innerWidth / 2.5) - (i + 2) * 200,
+        y: 200 + Math.random() * 1000 - 50 + (i === 2 ? -80 : 0)
+      })
+    }
+
    
   return (
+    <Box>
+
+      {celebration && <Fireworks {...fxProps} />}
     <Grid container marginTop={10} direction="column" alignItems="center" justifyContent="center">
+      
       <Box sx={{width:"600px",height:"600px",backgroundColor: "#44318D",borderRadius:"50px"}}>
         <Grid container marginTop={10} direction="column" alignItems="center" justifyContent="center">
           <Typography variant="h4" component="h1" sx={{color:"#FFFFFF", marginBottom:"20px"}}>
@@ -296,7 +357,7 @@ function App() {
                       <CircleIcon fontSize="small" />
                     </ListItemIcon>
                     <ListItemText>
-                      <Typography variant="h5" component="p">
+                      <Typography variant="h5" component="span">
                           Given a 3×3 board with 8 tiles (every tile has one number from 1 to 8) and one empty space.
                       </Typography>
                     </ListItemText>
@@ -306,7 +367,7 @@ function App() {
                       <CircleIcon fontSize="small" />
                     </ListItemIcon>
                     <ListItemText>
-                      <Typography variant="h5" component="p">
+                      <Typography variant="h5" component="span">
                          The objective is to place the numbers on tiles to match the final configuration using the empty space.
                       </Typography>
                     </ListItemText>
@@ -316,7 +377,7 @@ function App() {
                       <CircleIcon fontSize="small" />
                     </ListItemIcon>
                     <ListItemText>
-                      <Typography variant="h5" component="p">
+                      <Typography variant="h5" component="span">
                           We can slide four adjacent (left, right, above, and below) tiles into the empty space. 
                       </Typography>
                     </ListItemText>
@@ -326,7 +387,7 @@ function App() {
                       <CircleIcon fontSize="small" />
                     </ListItemIcon>
                     <ListItemText>
-                      <Typography variant="h5" component="p">
+                      <Typography variant="h5" component="span">
                         Desired State:
                           <DisplayNode  data={[[1,2,3],[4,5,6],[7,8,0]]} />
 
@@ -346,6 +407,7 @@ function App() {
 
           <Box ml={5} mr={5} mt={5}>
             <Paper variant="outlined" sx={{borderRadius:"30px",height:"650px",width:"650px"}}>
+
                 <Typography variant="h3" component="h2" sx={{textAlign:"center",color:"#44318D",marginTop:"20px", marginBottom:"20px"}}>
                     Algorithm:
                 </Typography>
@@ -355,7 +417,7 @@ function App() {
                       <CircleIcon fontSize="small" />
                     </ListItemIcon>
                     <ListItemText>
-                      <Typography variant="h5" component="p">
+                      <Typography variant="h5" component="span">
                            A* algorithm that is widely used in pathfinding and graph traversal, has been used in order to find the desired state.
                       </Typography>
                     </ListItemText>
@@ -365,7 +427,7 @@ function App() {
                       <CircleIcon fontSize="small" />
                     </ListItemIcon>
                     <ListItemText>
-                      <Typography variant="h5" component="p">
+                      <Typography variant="h5" component="span">
                           The main objective of A* is to reduce the heuristic function f(n)=g(n)+h(n) to the minimum and hence choose the nodes.
                       </Typography>
                     </ListItemText>
@@ -375,7 +437,7 @@ function App() {
                       <CircleIcon fontSize="small" />
                     </ListItemIcon>
                     <ListItemText>
-                      <Typography variant="h5" component="p">
+                      <Typography variant="h5" component="span">
                           g(n) is the cost of the path from the start node to the current node.
                           <br/>
                           h(n) is the number of misplaced tiles
@@ -406,8 +468,9 @@ function App() {
       
 
     </Grid>
-    
+    </Box>
   )
 }
 
 export default App
+
