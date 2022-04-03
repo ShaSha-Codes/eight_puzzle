@@ -8,15 +8,15 @@ function DisplayNode(props) {
     let res=[]
     for(let k of props.data){
       res.push( 
-        <tr>
-            <td>
-              {k[0]}
+        <tr >
+            <td >
+              {k[0]===0?"":k[0]}
             </td>
             <td>
-              {k[1]}
+              {k[1]===0?"":k[1]}
             </td>
             <td>
-              {k[2]}
+              {k[2]===0?"":k[2]}
             </td>
         </tr>)
     }
@@ -46,9 +46,12 @@ function DisplayNode(props) {
             
 
         </table>
-        <Typography sx={{textAlign:"center", marginTop:"1em"}}component="h2" variant="h6">
-          F(N)={FN()}
-        </Typography>
+        {props.depth!==undefined &&
+            <Typography sx={{textAlign:"center", marginTop:"1em"}}component="h2" variant="h6">
+            F(N)={FN()}
+          </Typography>
+        }
+        
     </Box>
   )
 }

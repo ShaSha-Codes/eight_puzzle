@@ -4,6 +4,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Tile from './components/Tile';
 import Button from '@mui/material/Button';
+import Paper from '@mui/material/Paper';
 import './style.css'
 import { v4 } from 'uuid';
 import TreeView from '@mui/lab/TreeView';
@@ -11,9 +12,17 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import TreeItem from '@mui/lab/TreeItem';
 import DisplayLevel from './components/DisplayLevel';
-import song from "./audio/slide.mp3";
+import List from '@mui/material/List';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import CircleIcon from '@mui/icons-material/Circle';
+import ListItemButton from '@mui/material/ListItemButton';
+import DisplayNode from './components/DisplayNode';
+
+
+
 function App() {
-  let new_song = new Audio(song);
+  
   const [realRoot, setRealRoot] = React.useState([[1,8,2],[0,4,3],[7,6,5]]);
   const [path,setPath]=React.useState(0)
   const [tree,setTree]=React.useState(0)
@@ -22,10 +31,9 @@ function App() {
   React.useEffect(()=>{
     if(iterator>-1){
         setTimeout(()=>{
-          new_song.play();
           setRealRoot(path[iterator])
           setIterator(prevIterator=>prevIterator-1)
-        }, 1500)
+        }, 500)
     }
   },[iterator])
   //Class
@@ -202,10 +210,10 @@ function App() {
 
     function levelDisplayer(){
       if(visible==1){
-        let res=[]
+        let res=[<Typography sx={{color:"black",textAlign:"center",marginBottom:'30px',marginTop:'50px'}}variant="h4" component="h1">Steps</Typography>]
         let counter=0
         for (let i of tree){
-          res.push(<TreeItem nodeId={counter} label={<Typography sx={{textAlign:"center"}}variant="h5" component="h1">Depth {counter}</Typography>}>
+          res.push(<TreeItem nodeId={counter} label={<Typography sx={{color:"black",textAlign:"center"}}variant="h5" component="h1">Depth {counter}</Typography>}>
                       <DisplayLevel data={i} depth={counter}/> 
                   </TreeItem>)
           counter+=1
@@ -251,11 +259,10 @@ function App() {
    
   return (
     <Grid container marginTop={10} direction="column" alignItems="center" justifyContent="center">
-      <Box sx={{width:"600px",height:"600px",backgroundColor: "#b1bfd8",
-backgroundImage:"linear-gradient(315deg, #b1bfd8 0%, #6782b4 74%)",borderRadius:"50px"}}>
+      <Box sx={{width:"600px",height:"600px",backgroundColor: "#44318D",borderRadius:"50px"}}>
         <Grid container marginTop={10} direction="column" alignItems="center" justifyContent="center">
-          <Typography variant="h4" component="h1" sx={{marginBottom:"20px"}}>
-              8 - Puzzle (IDA*)
+          <Typography variant="h4" component="h1" sx={{color:"#FFFFFF", marginBottom:"20px"}}>
+              8 - Puzzle
           </Typography>
           <Box sx={{width:"400px"}}>
             <Grid mt={2} ml={2} mb={4} container spacing={1} sx={{ width:"100%"}} >
@@ -272,16 +279,129 @@ backgroundImage:"linear-gradient(315deg, #b1bfd8 0%, #6782b4 74%)",borderRadius:
           </Button>
         </Grid>
       </Box>
-      <TreeView
-        aria-label="file system navigator"
-        defaultCollapseIcon={<ExpandMoreIcon />}
-        defaultExpandIcon={<ChevronRightIcon />}
-        sx={{  marginTop:"2em",flexGrow: 1, width: 1400}}
-      >
+      <Box mt={4} p={5} sx={{height:"100%",backgroundColor: "#fff",borderRadius:"50px"}}>
+        <Typography variant="h3" component="h1" sx={{textAlign:"center",color:"#44318D", marginBottom:"20px"}}>
+            8 - Puzzle   
+        </Typography>
+        <hr/>
+        <Grid container spacing={2}>
+          <Box ml={5} mr={5} mt={5}>
+            <Paper variant="outlined" sx={{borderRadius:"30px",height:"650px",width:"650px"}}>
+                <Typography variant="h3" component="h2" sx={{textAlign:"center",color:"#44318D",marginTop:"20px", marginBottom:"20px"}}>
+                    Rules:
+                </Typography>
+                <List>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <CircleIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>
+                      <Typography variant="h5" component="p">
+                          Given a 3×3 board with 8 tiles (every tile has one number from 1 to 8) and one empty space.
+                      </Typography>
+                    </ListItemText>
+                  </ListItemButton>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <CircleIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>
+                      <Typography variant="h5" component="p">
+                         The objective is to place the numbers on tiles to match the final configuration using the empty space.
+                      </Typography>
+                    </ListItemText>
+                  </ListItemButton>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <CircleIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>
+                      <Typography variant="h5" component="p">
+                          We can slide four adjacent (left, right, above, and below) tiles into the empty space. 
+                      </Typography>
+                    </ListItemText>
+                  </ListItemButton>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <CircleIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>
+                      <Typography variant="h5" component="p">
+                        Desired State:
+                          <DisplayNode  data={[[1,2,3],[4,5,6],[7,8,0]]} />
 
-            {levelDisplayer()}
+                      </Typography>
+                    </ListItemText>
+                  </ListItemButton>
+                </List>
+            </Paper>
+          </Box>
 
-      </TreeView>
+
+
+
+
+
+
+
+          <Box ml={5} mr={5} mt={5}>
+            <Paper variant="outlined" sx={{borderRadius:"30px",height:"650px",width:"650px"}}>
+                <Typography variant="h3" component="h2" sx={{textAlign:"center",color:"#44318D",marginTop:"20px", marginBottom:"20px"}}>
+                    Algorithm:
+                </Typography>
+                <List>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <CircleIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>
+                      <Typography variant="h5" component="p">
+                           A* algorithm that is widely used in pathfinding and graph traversal, has been used in order to find the desired state.
+                      </Typography>
+                    </ListItemText>
+                  </ListItemButton>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <CircleIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>
+                      <Typography variant="h5" component="p">
+                          The main objective of A* is to reduce the heuristic function f(n)=g(n)+h(n) to the minimum and hence choose the nodes.
+                      </Typography>
+                    </ListItemText>
+                  </ListItemButton>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <CircleIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>
+                      <Typography variant="h5" component="p">
+                          g(n) is the cost of the path from the start node to the current node.
+                          <br/>
+                          h(n) is the number of misplaced tiles
+                      </Typography>
+                    </ListItemText>
+                  </ListItemButton>
+                
+                </List>
+            </Paper>
+          </Box>
+
+
+        </Grid>
+        <TreeView
+          aria-label="file system navigator"
+          defaultCollapseIcon={<ExpandMoreIcon />}
+          defaultExpandIcon={<ChevronRightIcon />}
+          sx={{ marginTop:"2em",flexGrow: 1, width: 1400}}
+        >
+         
+
+              {levelDisplayer()}
+
+        </TreeView>
+        
+      </Box>
       
       
 

@@ -3,6 +3,7 @@ td{
     font-size: 1.1em;
     border:1px solid;
     margin:0px;
+    
 }
 
 table{
@@ -10,5 +11,13 @@ table{
     width:100px;
     height:100px;
     text-align: center;
+    
 }
 
+#root{
+    background-color: "#2A1B3C"
+}
+
+*{
+    color: #2A1541;
+}

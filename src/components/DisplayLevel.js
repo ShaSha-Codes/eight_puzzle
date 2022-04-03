@@ -11,8 +11,8 @@ function DisplayLevel(props) {
         return res
     } 
   return (
-    <TreeItem nodeId={props.depth+1*100} label={ 
-            <Grid mt={2} ml={2} mb={4} alignItems="center" justifyContent="center" container spacing={1} sx={{ width:"100%"}} >
+    <TreeItem  nodeId={props.depth+1*100} label={ 
+            <Grid mt={2} ml={2} mb={4} alignItems="center" justifyContent="center" container spacing={1} sx={{backgroundColor:"#fff",width:"95%"}} >
                 {returnNodes()}
             </Grid>
     } />
